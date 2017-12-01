@@ -25,6 +25,7 @@ function ninghao_wp_rest_jwt_alter( $data, $user ) {
 
   $data['user_avatar'] = $avatar;
   $data['user_caps'] = $user->caps;
+  $data['user_id'] = $user->ID;
 
   return $data;
 }
