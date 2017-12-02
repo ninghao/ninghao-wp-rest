@@ -8,6 +8,7 @@ Author URI: https://ninghao.net
 */
 
 require plugin_dir_path(__FILE__) . 'includes/endpoints/class-ninghao-wp-rest-users-controller.php';
+require plugin_dir_path(__FILE__) . 'includes/endpoints/class-ninghao-wp-rest-weixin-controller.php';
 
 function ninghao_wp_rest_field_alter( $data, $post, $context ) {
   $data->data['excerpt']['plaintext'] = wp_strip_all_tags($data->data['excerpt']['rendered']);
@@ -34,4 +35,8 @@ add_filter( 'jwt_auth_token_before_dispatch', 'ninghao_wp_rest_jwt_alter', 10, 2
 add_action( 'rest_api_init', function () {
   $users = new Ninghao_WP_REST_Users_Controller();
   $users->register_routes();
+} );
+add_action( 'rest_api_init', function () {
+  $weixin = new Ninghao_WP_REST_Weixin_Controller();
+  $weixin->register_routes();
 } );
