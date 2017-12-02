@@ -14,7 +14,7 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
   }
 
   public function bind_permissions_check( $request ) {
-		$user = $this->get_user( $request['id'] );
+		$user = $this->get_user( $request['userId'] );
 		if ( is_wp_error( $user ) ) {
 			return $user;
 		}
