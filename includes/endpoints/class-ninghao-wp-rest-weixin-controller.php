@@ -60,15 +60,24 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
 
   public function bind( $request ) {
     $js_code = $request['code'];
+    $user_id = $request['userId'];
 
     $session = $this->get_weixin_session( $js_code );
-    return $session;
+    if ( is_wp_error($session) ) {
+      return $session;
+    }
+    $this->update_user_weixin_session( $user_id, $session );
+    return 'ok';
+  }
+
+  public function update_user_weixin_session( $user_id, $session ) {
+    update_user_meta( $user_id, 'wx_openid', $session['openid'] );
+    update_user_meta( $user_id, 'wx_session_key', $session['session_key'] );
   }
 
   public function get_weixin_session( $js_code ) {
     $API_BASE = 'https://api.weixin.qq.com/sns/jscode2session';
-    // $APP_ID = env('WX_APP_ID');
-    $APP_ID = '12';
+    $APP_ID = env('WX_APP_ID');
     $SECRET = env('WX_APP_SECRET');
     $url = "$API_BASE?appid=$APP_ID&secret=$SECRET&js_code=$js_code&grant_type=authorization_code";
 
