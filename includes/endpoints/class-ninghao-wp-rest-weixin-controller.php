@@ -60,7 +60,9 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
 
   public function bind( $request ) {
     $js_code = $request['code'];
-    return 'ok';
+
+    $session = $this->get_weixin_session( $js_code );
+    return $session;
   }
 
   public function get_weixin_session( $js_code ) {
@@ -70,6 +72,7 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
     $url = "$API_BASE?appid=$APP_ID&secret=$SECRET&js_code=$js_code&grant_type=authorization_code";
 
     $response = wp_remote_get( $url );
-    return $response;
+    $session = json_decode( $response['body'], true );
+    return $session;
   }
 }
