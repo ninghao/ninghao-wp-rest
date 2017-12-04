@@ -66,6 +66,19 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
     if ( is_wp_error($session) ) {
       return $session;
     }
+
+    $user = $this->get_user_by_openid( $session['openid'] );
+
+    if ( $user ) {
+      return new WP_Error(
+        'weixin_rest_already_bind',
+        __( '您的微信帐号与某个用户已经绑定在一起了。' ),
+        [
+          'status' => 400
+        ]
+      );
+    }
+
     $this->update_user_weixin_session( $user_id, $session );
     return 'ok';
   }
@@ -73,6 +86,20 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
   public function update_user_weixin_session( $user_id, $session ) {
     update_user_meta( $user_id, 'wx_openid', $session['openid'] );
     update_user_meta( $user_id, 'wx_session_key', $session['session_key'] );
+  }
+
+  public function get_user_by_openid( $openid ) {
+    $users = get_users([
+      'meta_key' => 'wx_openid',
+      'meta_value' => $openid,
+      'meta_compare' => '='
+    ]);
+
+    if ( empty( $users ) ) {
+      return NULL;
+    }
+
+    return $users[0];
   }
 
   public function get_weixin_session( $js_code ) {
