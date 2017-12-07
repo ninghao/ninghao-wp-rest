@@ -11,6 +11,37 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
       'callback' => [ $this, 'bind' ],
       'permission_callback' => [ $this, 'bind_permissions_check' ]
     ] );
+    register_rest_route( $this->namespace, '/login', [
+      'methods' => WP_REST_Server::EDITABLE,
+      'callback' => [ $this, 'login' ],
+      'permission_callback' => [ $this, 'login_permissions_check' ]
+    ] );
+  }
+
+  public function login_permissions_check( $request ) {
+    return true;
+  }
+
+  public function login( $request ) {
+    $js_code = $request['code'];
+    $session = $this->get_weixin_session( $js_code );
+    if ( is_wp_error( $session ) ) {
+      return $session;
+    }
+
+    $user = $this->get_user_by_openid( $session['openid'] );
+
+    if ( !$user ) {
+      return new WP_Error(
+        'weixin_rest_not_bind',
+        __( '您的微信帐号还没有跟网站用户绑定' ),
+        [
+          'status' => 404
+        ]
+      );
+    }
+
+    return $user;
   }
 
   public function bind_permissions_check( $request ) {
