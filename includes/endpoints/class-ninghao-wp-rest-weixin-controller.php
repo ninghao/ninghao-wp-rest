@@ -150,6 +150,7 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
   public function bind( $request ) {
     $js_code = $request['code'];
     $user_id = $request['userId'];
+    $user_info = $request['userInfo']['userInfo'];
 
     $session = $this->get_weixin_session( $js_code );
     if ( is_wp_error($session) ) {
@@ -169,7 +170,18 @@ class Ninghao_WP_REST_Weixin_Controller extends WP_REST_Controller {
     }
 
     $this->update_user_weixin_session( $user_id, $session );
+    $this->update_user_weixin_user_info( $user_id, $user_info );
     return 'ok';
+  }
+
+  public function update_user_weixin_user_info( $user_id, $user_info ) {
+    update_user_meta( $user_id, 'wx_avatar_url', $user_info['avatarUrl'] );
+    update_user_meta( $user_id, 'wx_city', $user_info['city'] );
+    update_user_meta( $user_id, 'wx_country', $user_info['country'] );
+    update_user_meta( $user_id, 'wx_gender', $user_info['gender'] );
+    update_user_meta( $user_id, 'wx_language', $user_info['language'] );
+    update_user_meta( $user_id, 'wx_nickname', $user_info['nickName'] );
+    update_user_meta( $user_id, 'wx_province', $user_info['province'] );
   }
 
   public function update_user_weixin_session( $user_id, $session ) {
