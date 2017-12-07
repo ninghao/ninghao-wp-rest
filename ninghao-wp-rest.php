@@ -25,6 +25,19 @@ function ninghao_wp_rest_jwt_alter( $data, $user ) {
   ];
 
   $data['user_avatar'] = $avatar;
+
+  $wx_avatar = get_user_meta( $user->ID, 'wx_avatar_url', true );
+
+  if ( $wx_avatar ) {
+    $wx_avatar = substr( $wx_avatar, 0, -1 );
+    $wx_avatar = [
+      'lg' => $wx_avatar . '132',
+      'md' => $wx_avatar . '96',
+      'sm' => $wx_avatar . '46'
+    ];
+    $data['user_avatar'] = $wx_avatar;
+  }
+
   $data['user_caps'] = $user->caps;
   $data['user_id'] = $user->ID;
 
