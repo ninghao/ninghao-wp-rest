@@ -1,0 +1,12 @@
+{
+    "name": "wanghao/ninghao-wp-rest",
+    "require": {
+        "firebase/php-jwt": "^5.0"
+    },
+    "authors": [
+        {
+            "name": "wanghao8080",
+            "email": "117663444@qq.com"
+        }
+    ]
+}
